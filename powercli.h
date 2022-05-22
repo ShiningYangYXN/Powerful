@@ -79,3 +79,14 @@ string setBackGround(string text,string backColor)
     }
     else return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
 }
+void setTitle(string title){system(("title "+title).c_str());}
+void setCursor(int x,int y){puts(("\x1b["+to_string(x)+";"+to_string(y)+"H").c_str());}
+void cursorUp(int n){{puts(("\x1b["+to_string(n)+"A").c_str());}}
+void cursorDown(int n){{puts(("\x1b["+to_string(n)+"B").c_str());}}
+void cursorLeft(int n){{puts(("\x1b["+to_string(n)+"C").c_str());}}
+void cursorRight(int n){{puts(("\x1b["+to_string(n)+"D").c_str());}}
+void cursorNextLine(int n){{puts(("\x1b["+to_string(n)+"E").c_str());}}
+void cursorPrevLine(int n){{puts(("\x1b["+to_string(n)+"F").c_str());}}
+void cursorGotoColumn(int n){{puts(("\x1b["+to_string(n)+"G").c_str());}}
+void saveCursor(){{puts("\x1b[s");}}
+void restoreCursor(){{puts("\x1b[u");}}
