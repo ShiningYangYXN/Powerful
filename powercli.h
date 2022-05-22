@@ -1,9 +1,7 @@
 #pragma once
-
 #include <bits/stdc++.h>
-
 using namespace std;
-
+#pragma region type - def
 typedef enum
 {
     Black,
@@ -36,8 +34,8 @@ typedef enum
     DoubleUnderlined,
     OverLined
 } textStyle;
-
-/*START COLOR*/
+#pragma endregion type - def
+#pragma region style
 string setColor(string text, int foreColorR, int foreColorG, int foreColorB, int backColorR, int backColorG, int backColorB)
 {
     if (foreColorR >= 0 && foreColorR <= 255 && foreColorG >= 0 && foreColorG <= 255 && foreColorB >= 0 && foreColorB <= 255 && backColorR >= 0 && backColorR <= 255 && backColorG >= 0 && backColorG <= 255 && backColorB >= 0 && backColorB <= 255) // Value-check
@@ -173,7 +171,6 @@ string setBackGround(string text, color backColor)
         return "\x1b[10" + to_string(backColor) + "m" + text + "\x1b[0m";
     }
 }
-/*END COLOR*/
 string setStyle(string text, textStyle style)
 {
     switch (style)
@@ -212,7 +209,7 @@ string setStyle(string text, textStyle style)
         break;
     }
 }
-
+#pragma endregion style
 void setTitle(string title)
 {
     system(("title " + title).c_str());
@@ -274,4 +271,5 @@ void restoreCursor()
 {
     puts("\x1b[u");
 }
-/*START CURSOR*/
+/*END CURSOR*/
+/*START PROGRESSBAR*/
