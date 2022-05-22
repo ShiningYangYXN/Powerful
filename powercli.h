@@ -45,3 +45,37 @@ string setColor(string text,string foreColor,string backColor)
     }
     else return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
 }
+string setForeGround(string text,string foreColor)
+{
+    if(foreColor.length()==7&&foreColor[0]=='#')//Value check
+    {
+        try
+        {
+            setForeGround(text,stoi(string(&foreColor[1])+string(&foreColor[2]),0,16),stoi(string(&foreColor[3])+string(&foreColor[4]),0,16),stoi(string(&foreColor[5])+string(&foreColor[6]),0,16));
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+        }
+        
+    }
+    else return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+}
+string setBackGround(string text,string backColor)
+{
+    if(backColor.length()==7&&backColor[0]=='#')//Value check
+    {
+        try
+        {
+            setBackGround(text,stoi(string(&backColor[1])+string(&backColor[2]),0,16),stoi(string(&backColor[3])+string(&backColor[4]),0,16),stoi(string(&backColor[5])+string(&backColor[6]),0,16));
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+        }
+        
+    }
+    else return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+}
