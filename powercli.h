@@ -23,6 +23,19 @@ typedef enum
     BrightCyan,
     BrightWight
 } color;
+typedef enum
+{
+    Bold,
+    Weak,
+    Italic,
+    Underlined,
+    Twinkle,
+    Opposite,
+    Hidden,
+    Deleted,
+    DoubleUnderline,
+    OverLined
+} style;
 
 string setColor(string text, int foreColorR, int foreColorG, int foreColorB, int backColorR, int backColorG, int backColorB)
 {
@@ -159,7 +172,20 @@ string setBackGround(string text, color backColor)
         return "\x1b[10" + to_string(backColor) + "m" + text + "\x1b[0m";
     }
 }
-string setStyle() {}
+string setStyle(string text, style textStyle)
+{
+    switch (textStyle)
+    {
+    case 0:
+        return "\x1b[1m" + text + "\x1b[0m";
+        break;
+    case 1:
+        return "\x1b[2m" + text + "\x1b[0m";
+        break;
+    default:
+        break;
+    }
+}
 void setTitle(string title)
 {
     system(("title " + title).c_str());
