@@ -29,14 +29,15 @@ typedef enum
     Weak,
     Italic,
     Underlined,
-    Twinkle,
-    Opposite,
+    Twinkling,
+    Invert,
     Hidden,
     Deleted,
-    DoubleUnderline,
+    DoubleUnderlined,
     OverLined
-} style;
+} textStyle;
 
+/*START COLOR*/
 string setColor(string text, int foreColorR, int foreColorG, int foreColorB, int backColorR, int backColorG, int backColorB)
 {
     if (foreColorR >= 0 && foreColorR <= 255 && foreColorG >= 0 && foreColorG <= 255 && foreColorB >= 0 && foreColorB <= 255 && backColorR >= 0 && backColorR <= 255 && backColorG >= 0 && backColorG <= 255 && backColorB >= 0 && backColorB <= 255) // Value-check
@@ -172,9 +173,10 @@ string setBackGround(string text, color backColor)
         return "\x1b[10" + to_string(backColor) + "m" + text + "\x1b[0m";
     }
 }
-string setStyle(string text, style textStyle)
+/*END COLOR*/
+string setStyle(string text, textStyle style)
 {
-    switch (textStyle)
+    switch (style)
     {
     case 0:
         return "\x1b[1m" + text + "\x1b[0m";
@@ -182,15 +184,41 @@ string setStyle(string text, style textStyle)
     case 1:
         return "\x1b[2m" + text + "\x1b[0m";
         break;
+    case 2:
+        return "\x1b[3m" + text + "\x1b[0m";
+        break;
+    case 3:
+        return "\x1b[4m" + text + "\x1b[0m";
+        break;
+    case 4:
+        return "\x1b[5m" + text + "\x1b[0m";
+        break;
+    case 5:
+        return "\x1b[7m" + text + "\x1b[0m";
+        break;
+    case 6:
+        return "\x1b[8m" + text + "\x1b[0m";
+        break;
+    case 7:
+        return "\x1b[9m" + text + "\x1b[0m";
+        break;
+    case 8:
+        return "\x1b[21m" + text + "\x1b[0m";
+        break;
+    case 9:
+        return "\x1b[53m" + text + "\x1b[0m";
+        break;
     default:
         break;
     }
 }
+
 void setTitle(string title)
 {
     system(("title " + title).c_str());
 }
-void setCursor(int x, int y)
+/*START CURSOR*/
+void cursorGoto(int x, int y)
 {
     puts(("\x1b[" + to_string(x) + ";" + to_string(y) + "H").c_str());
 }
@@ -246,3 +274,4 @@ void restoreCursor()
 {
     puts("\x1b[u");
 }
+/*START CURSOR*/
