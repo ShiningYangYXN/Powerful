@@ -271,5 +271,3 @@ void restoreCursor()
 {
     puts("\x1b[u");
 }
-/*END CURSOR*/
-/*START PROGRESSBAR*/
