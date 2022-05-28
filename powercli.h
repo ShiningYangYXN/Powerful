@@ -19,7 +19,7 @@ typedef enum
     BrightBlue,
     BrightMagnta,
     BrightCyan,
-    BrightWight
+    BrightWight,
 } color;
 typedef enum
 {
@@ -27,12 +27,12 @@ typedef enum
     Weak,
     Italic,
     Underlined,
-    Twinkling,
-    Invert,
+    Blink,
+    Inverted,
     Hidden,
-    Deleted,
+    Strike,
     DoubleUnderlined,
-    OverLined
+    Overlined,
 } textStyle;
 #pragma endregion type - def
 #pragma region style
@@ -40,7 +40,7 @@ string setColor(string text, int foreColorR, int foreColorG, int foreColorB, int
 {
     if (foreColorR >= 0 && foreColorR <= 255 && foreColorG >= 0 && foreColorG <= 255 && foreColorB >= 0 && foreColorB <= 255 && backColorR >= 0 && backColorR <= 255 && backColorG >= 0 && backColorG <= 255 && backColorB >= 0 && backColorB <= 255) // Value-check
     {
-        return "\x1b[38;2;" + to_string(foreColorR) + ";" + to_string(foreColorG) + ";" + to_string(foreColorB) + "m\x1b[38;2;" + to_string(backColorR) + ";" + to_string(backColorG) + ";" + to_string(backColorB) + "m" + text + "\x1b[0m";
+        return "\x1b[38;2;" + to_string(foreColorR) + ";" + to_string(foreColorG) + ";" + to_string(foreColorB) + ";38;2;" + to_string(backColorR) + ";" + to_string(backColorG) + ";" + to_string(backColorB) + "m" + text + "\x1b[0m";
     }
     else
     {
@@ -130,22 +130,22 @@ string setColor(string text, color foreColor, color backColor)
     {
         if (backColor <= 7)
         {
-            return "\x1b[3" + to_string(foreColor) + "m\x1b[4" + to_string(backColor) + "m" + text + "\x1b[0m";
+            return "\x1b[3" + to_string(foreColor) + ";4" + to_string(backColor) + "m" + text + "\x1b[0m";
         }
         else
         {
-            return "\x1b[3" + to_string(foreColor) + "m\x1b[10" + to_string(backColor - 8) + "m" + text + "\x1b[0m";
+            return "\x1b[3" + to_string(foreColor) + ";10" + to_string(backColor - 8) + "m" + text + "\x1b[0m";
         }
     }
     else
     {
         if (backColor <= 7)
         {
-            return "\x1b[9" + to_string(foreColor) + "m\x1b[4" + to_string(backColor) + "m" + text + "\x1b[0m";
+            return "\x1b[9" + to_string(foreColor) + ";4" + to_string(backColor) + "m" + text + "\x1b[0m";
         }
         else
         {
-            return "\x1b[9" + to_string(foreColor) + "m\x1b[10" + to_string(backColor - 8) + "m" + text + "\x1b[0m";
+            return "\x1b[9" + to_string(foreColor) + ";10" + to_string(backColor - 8) + "m" + text + "\x1b[0m";
         }
     }
 }
@@ -171,50 +171,62 @@ string setBackGround(string text, color backColor)
         return "\x1b[10" + to_string(backColor) + "m" + text + "\x1b[0m";
     }
 }
+string setColor(string text, int foreGround, int backGround)
+{
+    if (foreGround >= 0 && foreGround < 256 && backGround >= 0 && backGround < 256)
+    {
+        return "\x1b[38;5;" + to_string(foreGround) + ";48;5;" + to_string(backGround) + "m" + text + "\x1b[0m";
+    }
+    else
+    {
+        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+    }
+}
 string setStyle(string text, textStyle style)
 {
     switch (style)
     {
-    case 0:
+    case textStyle::Bold:
         return "\x1b[1m" + text + "\x1b[0m";
         break;
-    case 1:
+    case textStyle::Weak:
         return "\x1b[2m" + text + "\x1b[0m";
         break;
-    case 2:
+    case textStyle::Italic:
         return "\x1b[3m" + text + "\x1b[0m";
         break;
-    case 3:
+    case textStyle::Underlined:
         return "\x1b[4m" + text + "\x1b[0m";
         break;
-    case 4:
+    case textStyle::Blink:
         return "\x1b[5m" + text + "\x1b[0m";
         break;
-    case 5:
+    case textStyle::Inverted:
         return "\x1b[7m" + text + "\x1b[0m";
         break;
-    case 6:
+    case textStyle::Hidden:
         return "\x1b[8m" + text + "\x1b[0m";
         break;
-    case 7:
+    case textStyle::Strike:
         return "\x1b[9m" + text + "\x1b[0m";
         break;
-    case 8:
+    case textStyle::DoubleUnderlined:
         return "\x1b[21m" + text + "\x1b[0m";
         break;
-    case 9:
+    case textStyle::Overlined:
         return "\x1b[53m" + text + "\x1b[0m";
         break;
     default:
         break;
     }
 }
+
 #pragma endregion style
 void setTitle(string title)
 {
     system(("title " + title).c_str());
 }
-/*START CURSOR*/
+#pragma region cursor
 void cursorGoto(int x, int y)
 {
     puts(("\x1b[" + to_string(x) + ";" + to_string(y) + "H").c_str());
@@ -271,3 +283,4 @@ void restoreCursor()
 {
     puts("\x1b[u");
 }
+#pragma endregion cursor
