@@ -1,5 +1,6 @@
 #pragma once
 #include <bits/stdc++.h>
+#include <unistd.h>
 using namespace std;
 #pragma region type - def
 typedef enum
@@ -34,6 +35,16 @@ typedef enum
     DoubleUnderlined,
     Overlined,
 } textStyle;
+typedef enum
+{
+    Fraction,
+    Percentage,
+} progressbarPromptStyle;
+typedef enum
+{
+    Legacy,
+    Modern,
+} progressbarStyle;
 #pragma endregion type - def
 #pragma region style
 string setColor(string text, int foreGroundR, int foreGroundG, int foreGroundB, int backGroundR, int backGroundG, int backGroundB)
@@ -306,3 +317,56 @@ void restoreCursor()
     puts("\x1b[u");
 }
 #pragma endregion cursor
+#pragma region controls
+string progressBar(int progress, int maxProgress, int width, string foreGround, string backGround, char symbol, char leftBorder, char rightBorder, progressbarPromptStyle promptStyle)
+{
+    string bar = string(&leftBorder);
+    int progressWidth = (progress * width) / maxProgress;
+    for (int i = 0; i < width; i++)
+    {
+        if (i < progressWidth)
+        {
+            bar += setColor(string(&symbol), foreGround, backGround);
+        }
+        else
+        {
+            bar += setColor(" ", foreGround, backGround);
+        }
+    }
+    switch (promptStyle)
+    {
+    case progressbarPromptStyle::Fraction:
+        bar += " " + to_string(progress) + "/" + to_string(maxProgress);
+        break;
+    case progressbarPromptStyle::Percentage:
+        bar += " " + to_string(float(progress / maxProgress)) + "%";
+        break;
+    default:
+        break;
+    }
+    return bar;
+}
+string progressBar(int progress, int maxProgress, int width, progressbarStyle style, progressbarPromptStyle promptStyle)
+{
+    switch (style)
+    {
+    case progressbarStyle::Legacy:
+        /* code */
+        break;
+    case progressbarStyle::Modern:
+        /* code */
+        break;
+    default:
+        break;
+    }
+}
+void showSpinner()
+{
+    static string symbols[] = {"|", "/", "-", "\\"};
+    for (int i = 0; i < 4; i++)
+    {
+
+        cout << "\r" << symbols[i] << "Loading..." << flush;
+    }
+}
+#pragma endregion controls
