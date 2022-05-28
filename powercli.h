@@ -36,11 +36,11 @@ typedef enum
 } textStyle;
 #pragma endregion type - def
 #pragma region style
-string setColor(string text, int foreColorR, int foreColorG, int foreColorB, int backColorR, int backColorG, int backColorB)
+string setColor(string text, int foreGroundR, int foreGroundG, int foreGroundB, int backGroundR, int backGroundG, int backGroundB)
 {
-    if (foreColorR >= 0 && foreColorR <= 255 && foreColorG >= 0 && foreColorG <= 255 && foreColorB >= 0 && foreColorB <= 255 && backColorR >= 0 && backColorR <= 255 && backColorG >= 0 && backColorG <= 255 && backColorB >= 0 && backColorB <= 255) // Value-check
+    if (foreGroundR >= 0 && foreGroundR <= 255 && foreGroundG >= 0 && foreGroundG <= 255 && foreGroundB >= 0 && foreGroundB <= 255 && backGroundR >= 0 && backGroundR <= 255 && backGroundG >= 0 && backGroundG <= 255 && backGroundB >= 0 && backGroundB <= 255) // Value-check
     {
-        return "\x1b[38;2;" + to_string(foreColorR) + ";" + to_string(foreColorG) + ";" + to_string(foreColorB) + ";38;2;" + to_string(backColorR) + ";" + to_string(backColorG) + ";" + to_string(backColorB) + "m" + text + "\x1b[0m";
+        return "\x1b[38;2;" + to_string(foreGroundR) + ";" + to_string(foreGroundG) + ";" + to_string(foreGroundB) + ";38;2;" + to_string(backGroundR) + ";" + to_string(backGroundG) + ";" + to_string(backGroundB) + "m" + text + "\x1b[0m";
     }
     else
     {
@@ -69,13 +69,13 @@ string setBackGround(string text, int r, int g, int b)
         return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
     }
 }
-string setColor(string text, string foreColor, string backColor)
+string setColor(string text, string foreGround, string backGround)
 {
-    if (foreColor.length() == backColor.length() == 7 && foreColor[0] == backColor[0] == '#') // Value check
+    if (foreGround.length() == backGround.length() == 7 && foreGround[0] == backGround[0] == '#') // Value check
     {
         try
         {
-            setColor(text, stoi(string(&foreColor[1]) + string(&foreColor[2]), 0, 16), stoi(string(&foreColor[3]) + string(&foreColor[4]), 0, 16), stoi(string(&foreColor[5]) + string(&foreColor[6]), 0, 16), stoi(string(&backColor[1]) + string(&backColor[2]), 0, 16), stoi(string(&backColor[3]) + string(&backColor[4]), 0, 16), stoi(string(&backColor[5]) + string(&backColor[6]), 0, 16));
+            setColor(text, stoi(string(&foreGround[1]) + string(&foreGround[2]), 0, 16), stoi(string(&foreGround[3]) + string(&foreGround[4]), 0, 16), stoi(string(&foreGround[5]) + string(&foreGround[6]), 0, 16), stoi(string(&backGround[1]) + string(&backGround[2]), 0, 16), stoi(string(&backGround[3]) + string(&backGround[4]), 0, 16), stoi(string(&backGround[5]) + string(&backGround[6]), 0, 16));
         }
         catch (const std::exception &e)
         {
@@ -86,32 +86,13 @@ string setColor(string text, string foreColor, string backColor)
     else
         return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
 }
-string setForeGround(string text, string foreColor)
+string setForeGround(string text, string foreGround)
 {
-    if (foreColor.length() == 7 && foreColor[0] == '#') // Value check
+    if (foreGround.length() == 7 && foreGround[0] == '#') // Value check
     {
         try
         {
-            setForeGround(text, stoi(string(&foreColor[1]) + string(&foreColor[2]), 0, 16), stoi(string(&foreColor[3]) + string(&foreColor[4]), 0, 16), stoi(string(&foreColor[5]) + string(&foreColor[6]), 0, 16));
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << e.what() << '\n';
-            return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
-        }
-    }
-    else
-    {
-        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
-    }
-}
-string setBackGround(string text, string backColor)
-{
-    if (backColor.length() == 7 && backColor[0] == '#') // Value check
-    {
-        try
-        {
-            setBackGround(text, stoi(string(&backColor[1]) + string(&backColor[2]), 0, 16), stoi(string(&backColor[3]) + string(&backColor[4]), 0, 16), stoi(string(&backColor[5]) + string(&backColor[6]), 0, 16));
+            setForeGround(text, stoi(string(&foreGround[1]) + string(&foreGround[2]), 0, 16), stoi(string(&foreGround[3]) + string(&foreGround[4]), 0, 16), stoi(string(&foreGround[5]) + string(&foreGround[6]), 0, 16));
         }
         catch (const std::exception &e)
         {
@@ -124,51 +105,70 @@ string setBackGround(string text, string backColor)
         return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
     }
 }
-string setColor(string text, color foreColor, color backColor)
+string setBackGround(string text, string backGround)
 {
-    if (foreColor <= 7)
+    if (backGround.length() == 7 && backGround[0] == '#') // Value check
     {
-        if (backColor <= 7)
+        try
         {
-            return "\x1b[3" + to_string(foreColor) + ";4" + to_string(backColor) + "m" + text + "\x1b[0m";
+            setBackGround(text, stoi(string(&backGround[1]) + string(&backGround[2]), 0, 16), stoi(string(&backGround[3]) + string(&backGround[4]), 0, 16), stoi(string(&backGround[5]) + string(&backGround[6]), 0, 16));
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << '\n';
+            return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+        }
+    }
+    else
+    {
+        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+    }
+}
+string setColor(string text, color foreGround, color backGround)
+{
+    if (foreGround <= 7)
+    {
+        if (backGround <= 7)
+        {
+            return "\x1b[3" + to_string(foreGround) + ";4" + to_string(backGround) + "m" + text + "\x1b[0m";
         }
         else
         {
-            return "\x1b[3" + to_string(foreColor) + ";10" + to_string(backColor - 8) + "m" + text + "\x1b[0m";
+            return "\x1b[3" + to_string(foreGround) + ";10" + to_string(backGround - 8) + "m" + text + "\x1b[0m";
         }
     }
     else
     {
-        if (backColor <= 7)
+        if (backGround <= 7)
         {
-            return "\x1b[9" + to_string(foreColor) + ";4" + to_string(backColor) + "m" + text + "\x1b[0m";
+            return "\x1b[9" + to_string(foreGround) + ";4" + to_string(backGround) + "m" + text + "\x1b[0m";
         }
         else
         {
-            return "\x1b[9" + to_string(foreColor) + ";10" + to_string(backColor - 8) + "m" + text + "\x1b[0m";
+            return "\x1b[9" + to_string(foreGround) + ";10" + to_string(backGround - 8) + "m" + text + "\x1b[0m";
         }
     }
 }
-string setForeGround(string text, color foreColor)
+string setForeGround(string text, color foreGround)
 {
-    if (foreColor <= 7)
+    if (foreGround <= 7)
     {
-        return "\x1b[3" + to_string(foreColor) + "m" + text + "\x1b[0m";
+        return "\x1b[3" + to_string(foreGround) + "m" + text + "\x1b[0m";
     }
     else
     {
-        return "\x1b[9" + to_string(foreColor) + "m" + text + "\x1b[0m";
+        return "\x1b[9" + to_string(foreGround) + "m" + text + "\x1b[0m";
     }
 }
-string setBackGround(string text, color backColor)
+string setBackGround(string text, color backGround)
 {
-    if (backColor <= 7)
+    if (backGround <= 7)
     {
-        return "\x1b[4" + to_string(backColor) + "m" + text + "\x1b[0m";
+        return "\x1b[4" + to_string(backGround) + "m" + text + "\x1b[0m";
     }
     else
     {
-        return "\x1b[10" + to_string(backColor) + "m" + text + "\x1b[0m";
+        return "\x1b[10" + to_string(backGround) + "m" + text + "\x1b[0m";
     }
 }
 string setColor(string text, int foreGround, int backGround)
@@ -176,6 +176,28 @@ string setColor(string text, int foreGround, int backGround)
     if (foreGround >= 0 && foreGround < 256 && backGround >= 0 && backGround < 256)
     {
         return "\x1b[38;5;" + to_string(foreGround) + ";48;5;" + to_string(backGround) + "m" + text + "\x1b[0m";
+    }
+    else
+    {
+        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+    }
+}
+string setForeGround(string text, int foreGround)
+{
+    if (foreGround >= 0 && foreGround < 256)
+    {
+        return "\x1b[38;5;" + to_string(foreGround) + "m" + text + "\x1b[0m";
+    }
+    else
+    {
+        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+    }
+}
+string setBackGround(string text, int backGround)
+{
+    if (backGround >= 0 && backGround < 256)
+    {
+        return "\x1b[48;5;" + to_string(backGround) + "m" + text + "\x1b[0m";
     }
     else
     {
