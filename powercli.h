@@ -1,6 +1,5 @@
 #pragma once
 #include <bits/stdc++.h>
-#include <unistd.h>
 using namespace std;
 #pragma region type - def
 typedef enum
@@ -39,12 +38,8 @@ typedef enum
 {
     Fraction,
     Percentage,
+    None,
 } progressbarPromptStyle;
-typedef enum
-{
-    Legacy,
-    Modern,
-} progressbarStyle;
 #pragma endregion type - def
 #pragma region style
 string setColor(string text, int foreGroundR, int foreGroundG, int foreGroundB, int backGroundR, int backGroundG, int backGroundB)
@@ -320,17 +315,142 @@ void restoreCursor()
 #pragma region controls
 string progressBar(int progress, int maxProgress, int width, string foreGround, string backGround, char symbol, char leftBorder, char rightBorder, progressbarPromptStyle promptStyle)
 {
-    string bar = string(&leftBorder);
+    string bar = string(&leftBorder, 1);
     int progressWidth = (progress * width) / maxProgress;
     for (int i = 0; i < width; i++)
     {
         if (i < progressWidth)
         {
-            bar += setColor(string(&symbol), foreGround, backGround);
+            bar += " " + setColor(string(&symbol, 1), foreGround, backGround);
+        }
+        else
+        {
+            bar += " " + setColor(" ", foreGround, backGround);
+        }
+    }
+    bar += string(&rightBorder, 1);
+    switch (promptStyle)
+    {
+    case progressbarPromptStyle::Fraction:
+        bar += " " + to_string(progress) + "/" + to_string(maxProgress);
+        break;
+    case progressbarPromptStyle::Percentage:
+        bar += " " + to_string(float(progress / maxProgress)) + "%";
+        break;
+    case progressbarPromptStyle::None:
+        break;
+    default:
+        break;
+    }
+    return bar;
+}
+string progressBar(int progress, int maxProgress, int width, color foreGround, color backGround, char symbol, char leftBorder, char rightBorder, progressbarPromptStyle promptStyle)
+{
+    string bar = string(&leftBorder, 1);
+    int progressWidth = (progress * width) / maxProgress;
+    for (int i = 0; i < width; i++)
+    {
+        if (i < progressWidth)
+        {
+            bar += " " + setColor(string(&symbol, 1), foreGround, backGround);
+        }
+        else
+        {
+            bar += " " + setColor(" ", foreGround, backGround);
+        }
+    }
+    bar += string(&rightBorder, 1);
+    switch (promptStyle)
+    {
+    case progressbarPromptStyle::Fraction:
+        bar += " " + to_string(progress) + "/" + to_string(maxProgress);
+        break;
+    case progressbarPromptStyle::Percentage:
+        bar += " " + to_string(float(progress / maxProgress)) + "%";
+        break;
+    case progressbarPromptStyle::None:
+        break;
+    default:
+        break;
+    }
+    return bar;
+}
+string progressBar(int progress, int maxProgress, int width, color foreGround, color backGround, char symbol, char leftBorder, char rightBorder, color promptForeGround, color promptBackGround, char promptLeftBorder, char promptRightBorder, progressbarPromptStyle promptStyle)
+{
+    string bar = string(&leftBorder, 1);
+    int progressWidth = (progress * width) / maxProgress;
+    for (int i = 0; i < width; i++)
+    {
+        if (i < progressWidth)
+        {
+            bar += " " + setColor(string(&symbol, 1), foreGround, backGround);
+        }
+        else
+        {
+            bar += " " + setColor(" ", foreGround, backGround);
+        }
+    }
+    bar += string(&rightBorder, 1);
+    switch (promptStyle)
+    {
+    case progressbarPromptStyle::Fraction:
+        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(progress) + "/" + to_string(maxProgress) + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
+        break;
+    case progressbarPromptStyle::Percentage:
+        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(float(progress / maxProgress)) + "%" + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
+        break;
+    case progressbarPromptStyle::None:
+        break;
+
+    default:
+        break;
+    }
+    return bar;
+}
+string progressBar(int progress, int maxProgress, int width, string foreGround, string backGround, char symbol, char leftBorder, char rightBorder, string promptForeGround, string promptBackGround, char promptLeftBorder, char promptRightBorder, progressbarPromptStyle promptStyle)
+{
+    string bar = string(&leftBorder, 1);
+    int progressWidth = (progress * width) / maxProgress;
+    for (int i = 0; i < width; i++)
+    {
+        if (i < progressWidth)
+        {
+            bar += setColor(string(&symbol, 1), foreGround, backGround);
         }
         else
         {
             bar += setColor(" ", foreGround, backGround);
+        }
+    }
+    bar += string(&rightBorder, 1);
+    switch (promptStyle)
+    {
+    case progressbarPromptStyle::Fraction:
+        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(progress) + "/" + to_string(maxProgress) + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
+        break;
+    case progressbarPromptStyle::Percentage:
+        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(float(progress / maxProgress)) + "%" + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
+        break;
+    case progressbarPromptStyle::None:
+        break;
+    default:
+        break;
+    }
+    return bar;
+}
+string progressBar(int progress, int maxProgress, int width, color foreGround, color backGround, progressbarPromptStyle promptStyle)
+{
+    string bar = "";
+    int progressWidth = (progress * width) / maxProgress;
+    for (int i = 0; i < width; i++)
+    {
+        if (i < progressWidth)
+        {
+            bar += setBackGround(" ", foreGround);
+        }
+        else
+        {
+            bar += setBackGround(" ", backGround);
         }
     }
     switch (promptStyle)
@@ -341,32 +461,81 @@ string progressBar(int progress, int maxProgress, int width, string foreGround, 
     case progressbarPromptStyle::Percentage:
         bar += " " + to_string(float(progress / maxProgress)) + "%";
         break;
+    case progressbarPromptStyle::None:
+        break;
     default:
         break;
     }
     return bar;
 }
-string progressBar(int progress, int maxProgress, int width, progressbarStyle style, progressbarPromptStyle promptStyle)
+string progressBar(int progress, int maxProgress, int width, string foreGround, string backGround, progressbarPromptStyle promptStyle)
 {
-    switch (style)
+    string bar = "";
+    int progressWidth = (progress * width) / maxProgress;
+    for (int i = 0; i < width; i++)
     {
-    case progressbarStyle::Legacy:
-        /* code */
+        if (i < progressWidth)
+        {
+            bar += setBackGround(" ", foreGround);
+        }
+        else
+        {
+            bar += setBackGround(" ", backGround);
+        }
+    }
+    switch (promptStyle)
+    {
+    case progressbarPromptStyle::Fraction:
+        bar += " " + to_string(progress) + "/" + to_string(maxProgress);
         break;
-    case progressbarStyle::Modern:
-        /* code */
+    case progressbarPromptStyle::Percentage:
+        bar += " " + to_string(float(progress / maxProgress)) + "%";
+        break;
+    case progressbarPromptStyle::None:
         break;
     default:
         break;
     }
+    return bar;
 }
+string progressBar(int progress, int maxProgress, int width, color foreGround, color backGround, color promptForeGround, color promptBackGround, progressbarPromptStyle promptStyle)
+{
+    string bar = "";
+    int progressWidth = (progress * width) / maxProgress;
+    for (int i = 0; i < width; i++)
+    {
+        if (i < progressWidth)
+        {
+            bar += setBackGround(" ", foreGround);
+        }
+        else
+        {
+            bar += setBackGround(" ", backGround);
+        }
+    }
+    switch (promptStyle)
+    {
+    case progressbarPromptStyle::Fraction:
+        bar += " " + setColor(to_string(progress) + "/" + to_string(maxProgress), promptForeGround, promptBackGround);
+        break;
+    case progressbarPromptStyle::Percentage:
+        bar += " " + setColor(to_string(float(progress / maxProgress)) + "%", promptForeGround, promptBackGround);
+        break;
+    case progressbarPromptStyle::None:
+        break;
+    default:
+        break;
+    }
+    return bar;
+}
+
 void showSpinner()
 {
     static string symbols[] = {"|", "/", "-", "\\"};
     for (int i = 0; i < 4; i++)
     {
-
-        cout << "\r" << symbols[i] << "Loading..." << flush;
+        this_thread::sleep_for(chrono::milliseconds(250));
+        cout << symbols[i] << "Loading.../r" << flush;
     }
 }
 #pragma endregion controls
