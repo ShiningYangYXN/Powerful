@@ -40,6 +40,13 @@ typedef enum
     Percentage,
     None,
 } progressbarPromptStyle;
+typedef enum
+{
+    Info,
+    Success,
+    Warning,
+    Error,
+} msgType;
 #pragma endregion type - def
 #pragma region style
 string setColor(string text, int foreGroundR, int foreGroundG, int foreGroundB, int backGroundR, int backGroundG, int backGroundB)
@@ -528,7 +535,28 @@ string progressBar(int progress, int maxProgress, int width, color foreGround, c
     }
     return bar;
 }
-
+string message(string message, msgType type)
+{
+    string msg = "";
+    switch (type)
+    {
+    case msgType::Info:
+        msg += setBackGround("[INFO]", color::White) + setForeGround(message, color::White);
+        break;
+    case msgType::Warning:
+        msg += setBackGround("[WARNING]", color::Yellow) setForeGround(message, color::Yellow);
+        break;
+    case msgType::Error:
+        msg += setBackGround("[ERROR]", color::Red);
+        break;
+    case msgType::Success:
+        msg += setBackGround("[SUCCESS]", color::Green);
+        break;
+    default:
+        break;
+    }
+    return msg;
+}
 void showSpinner()
 {
     static string symbols[] = {"|", "/", "-", "\\"};
