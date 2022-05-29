@@ -44,6 +44,7 @@ typedef enum
 {
     Legacy,
     Modern,
+    Line,
 } progressbarStyle;
 typedef enum
 {
@@ -331,7 +332,7 @@ void restoreCursor()
 }
 #pragma endregion cursor
 #pragma region controls
-string progressBar(int progress, int maxProgress, int width, string foreGround, string backGround, char symbol, char leftBorder, char rightBorder, progressbarPromptStyle promptStyle)
+string progressBar(int progress, int maxProgress = 100, int width = 50, string foreGround, string backGround, char symbol = '=', char leftBorder = '[', char rightBorder = ']', progressbarPromptStyle promptStyle = Percentage)
 {
     string bar = string(&leftBorder, 1);
     int progressWidth = (progress * width) / maxProgress;
@@ -362,7 +363,7 @@ string progressBar(int progress, int maxProgress, int width, string foreGround, 
     }
     return bar;
 }
-string progressBar(int progress, int maxProgress, int width, color foreGround, color backGround, char symbol, char leftBorder, char rightBorder, progressbarPromptStyle promptStyle)
+string progressBar(int progress, int maxProgress = 100, int width = 50, color foreGround, color backGround, char symbol = '=', char leftBorder = '[', char rightBorder = ']', progressbarPromptStyle promptStyle = Percentage)
 {
     string bar = string(&leftBorder, 1);
     int progressWidth = (progress * width) / maxProgress;
@@ -393,7 +394,7 @@ string progressBar(int progress, int maxProgress, int width, color foreGround, c
     }
     return bar;
 }
-string progressBar(int progress, int maxProgress, int width, color foreGround, color backGround, char symbol, char leftBorder, char rightBorder, color promptForeGround, color promptBackGround, char promptLeftBorder, char promptRightBorder, progressbarPromptStyle promptStyle)
+string progressBar(int progress, int maxProgress = 100, int width = 50, color foreGround, color backGround, char symbol = '=', char leftBorder = '[', char rightBorder = ']', color promptForeGround, color promptBackGround, char promptLeftBorder = '(', char promptRightBorder = ')', progressbarPromptStyle promptStyle = Percentage)
 {
     string bar = string(&leftBorder, 1);
     int progressWidth = (progress * width) / maxProgress;
@@ -425,7 +426,7 @@ string progressBar(int progress, int maxProgress, int width, color foreGround, c
     }
     return bar;
 }
-string progressBar(int progress, int maxProgress, int width, string foreGround, string backGround, char symbol, char leftBorder, char rightBorder, string promptForeGround, string promptBackGround, char promptLeftBorder, char promptRightBorder, progressbarPromptStyle promptStyle)
+string progressBar(int progress, int maxProgress = 100, int width = 50, string foreGround, string backGround, char symbol = '=', char leftBorder = '[', char rightBorder = ']', string promptForeGround, string promptBackGround, char promptLeftBorder = '(', char promptRightBorder = ')', progressbarPromptStyle promptStyle = Percentage)
 {
     string bar = string(&leftBorder, 1);
     int progressWidth = (progress * width) / maxProgress;
@@ -456,7 +457,7 @@ string progressBar(int progress, int maxProgress, int width, string foreGround, 
     }
     return bar;
 }
-string progressBar(int progress, int maxProgress, int width, color foreGround, color backGround, progressbarPromptStyle promptStyle)
+string progressBar(int progress, int maxProgress = 100, int width = 50, color foreGround, color backGround, progressbarPromptStyle promptStyle = Percentage)
 {
     string bar = "";
     int progressWidth = (progress * width) / maxProgress;
@@ -486,7 +487,7 @@ string progressBar(int progress, int maxProgress, int width, color foreGround, c
     }
     return bar;
 }
-string progressBar(int progress, int maxProgress, int width, string foreGround, string backGround, progressbarPromptStyle promptStyle)
+string progressBar(int progress, int maxProgress = 100, int width = 50, string foreGround, string backGround, progressbarPromptStyle promptStyle = Percentage)
 {
     string bar = "";
     int progressWidth = (progress * width) / maxProgress;
@@ -517,7 +518,7 @@ string progressBar(int progress, int maxProgress, int width, string foreGround, 
     }
     return bar;
 }
-string progressBar(int progress, int maxProgress, int width, color foreGround, color backGround, color promptForeGround, color promptBackGround, progressbarPromptStyle promptStyle)
+string progressBar(int progress, int maxProgress = 100, int width = 50, color foreGround, color backGround, color promptForeGround, color promptBackGround, progressbarPromptStyle promptStyle = Percentage)
 {
     string bar = "";
     int progressWidth = (progress * width) / maxProgress;
@@ -547,14 +548,14 @@ string progressBar(int progress, int maxProgress, int width, color foreGround, c
     }
     return bar;
 }
-string progressBar(int progress, int maxProgress, int width, progressbarStyle style, progressbarPromptStyle promptStyle)
+string progressBar(int progress, int maxProgress = 100, int width = 50, progressbarStyle style = progressbarStyle::Modern, progressbarPromptStyle promptStyle = Percentage)
 {
     string bar = "";
     switch (style)
     {
-    case Modern:
+    case progressbarStyle::Modern or progressbarStyle::Line:
         break;
-    case Legacy:
+    case progressbarStyle::Legacy:
         bar += "[";
         break;
     default:
@@ -566,11 +567,14 @@ string progressBar(int progress, int maxProgress, int width, progressbarStyle st
             {
                 switch (style)
                 {
-                case Modern:
+                case progressbarStyle::Modern:
                     bar += setStyle(" ", Inverse);
                     break;
-                case Legacy:
+                case progressbarStyle::Legacy:
                     bar += "=";
+                    break;
+                case progressbarStyle::Line:
+                    bar += "-";
                     break;
                 default:
                     break;
@@ -591,13 +595,13 @@ string progressBar(int progress, int maxProgress, int width, progressbarStyle st
 
             switch (promptStyle)
             {
-            case Fraction:
+            case progressbarPromptStyle::Fraction:
                 bar += " " + to_string(progress) + "/" + to_string(maxProgress);
                 break;
-            case Percentage:
+            case progressbarPromptStyle::Percentage:
                 bar += " " + to_string(float(progress / maxProgress)) + "%";
                 break;
-            case None:
+            case progressbarPromptStyle::None:
                 break;
             default:
                 break;
@@ -606,7 +610,7 @@ string progressBar(int progress, int maxProgress, int width, progressbarStyle st
         }
     }
 }
-string message(string msg, msgType type, msgStyle style)
+string message(string msg, msgType type, msgStyle style = Modern)
 {
     switch (type)
     {
@@ -689,17 +693,19 @@ string message(string msg, msgType type, msgStyle style)
         break;
     }
 }
-string message(string msg, msgType type)
+void showSpinner(string prompt = "Loading...", int delay = 100)
 {
-    return message(msg, type, Modern);
-}
-void showSpinner()
-{
-    static string symbols[] = {"|", "/", "-", "\\"};
-    for (int i = 0; i < 4; i++)
+    char spinner[] = {'|', '/', '-', '\\'};
+    int i = 0;
+    while (true)
     {
-        this_thread::sleep_for(chrono::milliseconds(250));
-        cout << symbols[i] << "Loading.../r" << flush;
+        cout << "\r" << prompt << " " << spinner[i];
+        i++;
+        if (i == 3)
+        {
+            i = 0;
+        }
+        this_thread::sleep_for(chrono::milliseconds(delay));
     }
 }
 #pragma endregion controls
