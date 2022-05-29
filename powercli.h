@@ -19,7 +19,7 @@ typedef enum
     BrightBlue,
     BrightMagnta,
     BrightCyan,
-    BrightWight,
+    BrightWhite,
 } color;
 typedef enum
 {
@@ -28,7 +28,7 @@ typedef enum
     Italic,
     Underlined,
     Blink,
-    Inverted,
+    Inverse,
     Hidden,
     Strike,
     DoubleUnderlined,
@@ -42,12 +42,23 @@ typedef enum
 } progressbarPromptStyle;
 typedef enum
 {
+    Legacy,
+    Modern,
+} progressbarStyle;
+typedef enum
+{
     Info,
     Success,
     Warning,
     Error,
 } msgType;
-#pragma endregion type - def
+typedef enum
+{
+    Legacy,
+    Modern,
+    Iconed,
+    NoColor,
+} msgStyle;
 #pragma region style
 string setColor(string text, int foreGroundR, int foreGroundG, int foreGroundB, int backGroundR, int backGroundG, int backGroundB)
 {
@@ -57,7 +68,7 @@ string setColor(string text, int foreGroundR, int foreGroundG, int foreGroundB, 
     }
     else
     {
-        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+        throw invalid_argument(message("Invalid color value", Error));
     }
 }
 string setForeGround(string text, int r, int g, int b)
@@ -68,7 +79,7 @@ string setForeGround(string text, int r, int g, int b)
     }
     else
     {
-        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+        throw invalid_argument(message("Invalid color value", Error));
     }
 }
 string setBackGround(string text, int r, int g, int b)
@@ -79,7 +90,7 @@ string setBackGround(string text, int r, int g, int b)
     }
     else
     {
-        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+        throw invalid_argument(message("Invalid color value", Error));
     }
 }
 string setColor(string text, string foreGround, string backGround)
@@ -93,11 +104,11 @@ string setColor(string text, string foreGround, string backGround)
         catch (const std::exception &e)
         {
             std::cerr << e.what() << '\n';
-            return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+            throw invalid_argument(message("Invalid color value", Error));
         }
     }
     else
-        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+        throw invalid_argument(message("Invalid color value", Error));
 }
 string setForeGround(string text, string foreGround)
 {
@@ -110,7 +121,7 @@ string setForeGround(string text, string foreGround)
         catch (const std::exception &e)
         {
             std::cerr << e.what() << '\n';
-            return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+            throw invalid_argument(message("Invalid color value", Error));
         }
     }
     else
@@ -129,7 +140,7 @@ string setBackGround(string text, string backGround)
         catch (const std::exception &e)
         {
             std::cerr << e.what() << '\n';
-            return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+            throw invalid_argument(message("Invalid color value", Error));
         }
     }
     else
@@ -192,7 +203,7 @@ string setColor(string text, int foreGround, int backGround)
     }
     else
     {
-        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+        throw invalid_argument(message("Invalid color value", Error));
     }
 }
 string setForeGround(string text, int foreGround)
@@ -203,7 +214,7 @@ string setForeGround(string text, int foreGround)
     }
     else
     {
-        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+        throw invalid_argument(message("Invalid color value", Error));
     }
 }
 string setBackGround(string text, int backGround)
@@ -214,41 +225,41 @@ string setBackGround(string text, int backGround)
     }
     else
     {
-        return "\x1b[41mE\x1b[0m:\x1b[31mInvalid Arguments\x1b[0m";
+        throw invalid_argument(message("Invalid color value", Error));
     }
 }
 string setStyle(string text, textStyle style)
 {
     switch (style)
     {
-    case textStyle::Bold:
+    case Bold:
         return "\x1b[1m" + text + "\x1b[0m";
         break;
-    case textStyle::Weak:
+    case Weak:
         return "\x1b[2m" + text + "\x1b[0m";
         break;
-    case textStyle::Italic:
+    case Italic:
         return "\x1b[3m" + text + "\x1b[0m";
         break;
-    case textStyle::Underlined:
+    case Underlined:
         return "\x1b[4m" + text + "\x1b[0m";
         break;
-    case textStyle::Blink:
+    case Blink:
         return "\x1b[5m" + text + "\x1b[0m";
         break;
-    case textStyle::Inverted:
+    case Inverse:
         return "\x1b[7m" + text + "\x1b[0m";
         break;
-    case textStyle::Hidden:
+    case Hidden:
         return "\x1b[8m" + text + "\x1b[0m";
         break;
-    case textStyle::Strike:
+    case Strike:
         return "\x1b[9m" + text + "\x1b[0m";
         break;
-    case textStyle::DoubleUnderlined:
+    case DoubleUnderlined:
         return "\x1b[21m" + text + "\x1b[0m";
         break;
-    case textStyle::Overlined:
+    case Overlined:
         return "\x1b[53m" + text + "\x1b[0m";
         break;
     default:
@@ -328,23 +339,23 @@ string progressBar(int progress, int maxProgress, int width, string foreGround, 
     {
         if (i < progressWidth)
         {
-            bar += " " + setColor(string(&symbol, 1), foreGround, backGround);
+            bar += setColor(string(&symbol, 1), foreGround, backGround);
         }
         else
         {
-            bar += " " + setColor(" ", foreGround, backGround);
+            bar += setColor(" ", foreGround, backGround);
         }
     }
     bar += string(&rightBorder, 1);
     switch (promptStyle)
     {
-    case progressbarPromptStyle::Fraction:
+    case Fraction:
         bar += " " + to_string(progress) + "/" + to_string(maxProgress);
         break;
-    case progressbarPromptStyle::Percentage:
+    case Percentage:
         bar += " " + to_string(float(progress / maxProgress)) + "%";
         break;
-    case progressbarPromptStyle::None:
+    case None:
         break;
     default:
         break;
@@ -359,23 +370,23 @@ string progressBar(int progress, int maxProgress, int width, color foreGround, c
     {
         if (i < progressWidth)
         {
-            bar += " " + setColor(string(&symbol, 1), foreGround, backGround);
+            bar += setColor(string(&symbol, 1), foreGround, backGround);
         }
         else
         {
-            bar += " " + setColor(" ", foreGround, backGround);
+            bar += setColor(" ", foreGround, backGround);
         }
     }
     bar += string(&rightBorder, 1);
     switch (promptStyle)
     {
-    case progressbarPromptStyle::Fraction:
+    case Fraction:
         bar += " " + to_string(progress) + "/" + to_string(maxProgress);
         break;
-    case progressbarPromptStyle::Percentage:
+    case Percentage:
         bar += " " + to_string(float(progress / maxProgress)) + "%";
         break;
-    case progressbarPromptStyle::None:
+    case None:
         break;
     default:
         break;
@@ -400,13 +411,13 @@ string progressBar(int progress, int maxProgress, int width, color foreGround, c
     bar += string(&rightBorder, 1);
     switch (promptStyle)
     {
-    case progressbarPromptStyle::Fraction:
+    case Fraction:
         bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(progress) + "/" + to_string(maxProgress) + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
         break;
-    case progressbarPromptStyle::Percentage:
+    case Percentage:
         bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(float(progress / maxProgress)) + "%" + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
         break;
-    case progressbarPromptStyle::None:
+    case None:
         break;
 
     default:
@@ -432,13 +443,13 @@ string progressBar(int progress, int maxProgress, int width, string foreGround, 
     bar += string(&rightBorder, 1);
     switch (promptStyle)
     {
-    case progressbarPromptStyle::Fraction:
+    case Fraction:
         bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(progress) + "/" + to_string(maxProgress) + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
         break;
-    case progressbarPromptStyle::Percentage:
+    case Percentage:
         bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(float(progress / maxProgress)) + "%" + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
         break;
-    case progressbarPromptStyle::None:
+    case None:
         break;
     default:
         break;
@@ -492,15 +503,16 @@ string progressBar(int progress, int maxProgress, int width, string foreGround, 
     }
     switch (promptStyle)
     {
-    case progressbarPromptStyle::Fraction:
+    case Fraction:
         bar += " " + to_string(progress) + "/" + to_string(maxProgress);
         break;
-    case progressbarPromptStyle::Percentage:
+    case Percentage:
         bar += " " + to_string(float(progress / maxProgress)) + "%";
         break;
-    case progressbarPromptStyle::None:
+    case None:
         break;
     default:
+        return;
         break;
     }
     return bar;
@@ -522,40 +534,164 @@ string progressBar(int progress, int maxProgress, int width, color foreGround, c
     }
     switch (promptStyle)
     {
-    case progressbarPromptStyle::Fraction:
+    case Fraction:
         bar += " " + setColor(to_string(progress) + "/" + to_string(maxProgress), promptForeGround, promptBackGround);
         break;
-    case progressbarPromptStyle::Percentage:
+    case Percentage:
         bar += " " + setColor(to_string(float(progress / maxProgress)) + "%", promptForeGround, promptBackGround);
         break;
-    case progressbarPromptStyle::None:
+    case None:
         break;
     default:
         break;
     }
     return bar;
 }
-string message(string message, msgType type)
+string progressBar(int progress, int maxProgress, int width, progressbarStyle style, progressbarPromptStyle promptStyle)
 {
-    string msg = "";
-    switch (type)
+    string bar = "";
+    switch (style)
     {
-    case msgType::Info:
-        msg += setBackGround("[INFO]", color::White) + setForeGround(message, color::White);
+    case Modern:
         break;
-    case msgType::Warning:
-        msg += setBackGround("[WARNING]", color::Yellow) setForeGround(message, color::Yellow);
-        break;
-    case msgType::Error:
-        msg += setBackGround("[ERROR]", color::Red);
-        break;
-    case msgType::Success:
-        msg += setBackGround("[SUCCESS]", color::Green);
+    case Legacy:
+        bar += "[";
         break;
     default:
         break;
+        int progressWidth = (progress * width) / maxProgress;
+        for (int i = 0; i < width; i++)
+        {
+            if (i < progressWidth)
+            {
+                switch (style)
+                {
+                case Modern:
+                    bar += setStyle(" ", Inverse);
+                    break;
+                case Legacy:
+                    bar += "=";
+                    break;
+                default:
+                    break;
+                }
+            }
+            else
+            {
+                bar += " ";
+            }
+        }
+        switch (style)
+        {
+        case Modern:
+            break;
+        case Legacy:
+            bar += "]";
+            break;
+
+            switch (promptStyle)
+            {
+            case Fraction:
+                bar += " " + to_string(progress) + "/" + to_string(maxProgress);
+                break;
+            case Percentage:
+                bar += " " + to_string(float(progress / maxProgress)) + "%";
+                break;
+            case None:
+                break;
+            default:
+                break;
+            }
+            return bar;
+        }
     }
-    return msg;
+}
+string message(string msg, msgType type, msgStyle style)
+{
+    switch (type)
+    {
+    case Info:
+        switch (style)
+        {
+        case Legacy:
+            return setForeGround("[INFO] ", Blue) + msg;
+            break;
+        case Modern:
+            return setBackGround("[INFO] ", Blue) + setForeGround(msg, BrightBlue);
+            break;
+        case Iconed:
+            return setBackGround("\u24d8 [INFO] ", Blue) + setForeGround(msg, BrightBlue);
+            break;
+        case NoColor:
+            return "[INFO] " + msg;
+            break;
+        default:
+            break;
+        }
+        break;
+    case Warning:
+        switch (style)
+        {
+        case Legacy:
+            return setForeGround("[WARNING] ", Yellow) + msg;
+            break;
+        case Modern:
+            return setBackGround("[WARNING] ", Yellow) + setForeGround(msg, BrightYellow);
+            break;
+        case Iconed:
+            return setBackGround("\u26a0 [WARNING] ", Yellow) + setForeGround(msg, BrightYellow);
+            break;
+        case NoColor:
+            return "[WARNING] " + msg;
+            break;
+        default:
+            break;
+        }
+        break;
+    case Error:
+        switch (style)
+        {
+        case Legacy:
+            return setForeGround("[ERROR] ", Red) + msg;
+            break;
+        case Modern:
+            return setBackGround("[ERROR] ", Red) + setForeGround(msg, BrightRed);
+            break;
+        case Iconed:
+            return setBackGround("\u2297 [ERROR] ", Red) + setForeGround(msg, BrightRed);
+            break;
+        case NoColor:
+            return "[ERROR] " + msg;
+            break;
+        default:
+            break;
+        }
+        break;
+    case Success:
+        switch (style)
+        {
+        case Legacy:
+            return setForeGround("[SUCCESS] ", Green) + msg;
+            break;
+        case Modern:
+            return setBackGround("[SUCCESS] ", Green) + setForeGround(msg, BrightGreen);
+            break;
+        case Iconed:
+            return setBackGround("\u2713 [SUCCESS] ", Green) + setForeGround(msg, BrightGreen);
+            break;
+        case NoColor:
+            return "[SUCCESS] " + msg;
+            break;
+        }
+        break;
+    default:
+        return;
+        break;
+    }
+}
+string message(string msg, msgType type)
+{
+    return message(msg, type, Modern);
 }
 void showSpinner()
 {
