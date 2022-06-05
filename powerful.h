@@ -1,7 +1,7 @@
 #pragma once
 #include <bits/stdc++.h>
 using namespace std;
-#pragma region type - def
+#pragma region typedef
 
 typedef enum
 {
@@ -12,7 +12,7 @@ typedef enum
 typedef enum
 {
     Legacy,
-    Modern,
+    Block,
     Line,
 } progressbarStyle;
 typedef enum
@@ -25,355 +25,240 @@ typedef enum
 typedef enum
 {
     Classic,
-    Block,
+    Modern,
     Iconed,
     NoColor,
 } msgStyle;
-#pragma endregion type - def
-#pragma region function - def
-
-#pragma endregion function - def
-
-void setTitle(string title)
+typedef enum
 {
-    system(("title " + title).c_str());
+    Black,
+    Red,
+    Green,
+    Yellow,
+    Blue,
+    Magnta,
+    Cyan,
+    White,
+    BrightBlack,
+    BrightRed,
+    BrightGreen,
+    BrightYellow,
+    BrightBlue,
+    BrightMagnta,
+    BrightCyan,
+    BrightWhite,
+} color;
+typedef enum
+{
+    Bold,
+    Dim,
+    Italic,
+    Underlined,
+    Blink,
+    Inverse,
+    Hidden,
+    Strike,
+    DoubleUnderlined,
+    Overlined,
+} textStyle;
+typedef unsigned char byte;
+typedef unsigned int HEX;
+typedef byte colorRGB[3];
+#pragma endregion typedef
+#pragma region functiondef
+
+#pragma endregion functiondef
+#pragma region style
+colorRGB *hexToRGB(HEX color)
+{
+    colorRGB rgb;
+    rgb[0] = (color >> 16) & 0xFF;
+    rgb[1] = (color >> 8) & 0xFF;
+    rgb[2] = color & 0xFF;
+    return &rgb;
 }
+string setColor(string text, colorRGB foreGround, colorRGB backGround)
+{
+    return "\x1b[38;2;" + to_string(foreGround[0]) + ";" + to_string(foreGround[1]) + ";" + to_string(foreGround[2]) + ";38;2;" + to_string(backGround[0]) + ";" + to_string(backGround[1]) + ";" + to_string(backGround[2]) + "m" + text + "\x1b[0m";
+}
+string setForeGround(string text, colorRGB foreGround)
+{
+    return "\x1b[38;2;" + to_string(foreGround[0]) + ";" + to_string(foreGround[1]) + ";" + to_string(foreGround[2]) + "m" + text + "\x1b[0m";
+}
+string setBackGround(string text, colorRGB backGround)
+{
+    return "\x1b[48;2;" + to_string(backGround[0]) + ";" + to_string(backGround[1]) + ";" + to_string(backGround[2]) + "m" + text + "\x1b[0m";
+}
+string setColor(string text, HEX ForeGround, HEX BackGround)
+{
+    return setColor(text, *hexToRGB(ForeGround), *hexToRGB(BackGround));
+}
+string setForeGround(string text, HEX ForeGround)
+{
+    return setForeGround(text, *hexToRGB(ForeGround));
+}
+string setBackGround(string text, HEX BackGround)
+{
+    return setBackGround(text, *hexToRGB(BackGround));
+}
+string setColor(string text, color foreGround, color backGround)
+{
+    if (foreGround <= 7)
+    {
+        if (backGround <= 7)
+        {
+            return "\x1b[3" + to_string(foreGround) + ";4" + to_string(backGround) + "m" + text + "\x1b[0m";
+        }
+        else
+        {
+            return "\x1b[3" + to_string(foreGround) + ";10" + to_string(backGround - 8) + "m" + text + "\x1b[0m";
+        }
+    }
+    else
+    {
+        if (backGround <= 7)
+        {
+            return "\x1b[9" + to_string(foreGround) + ";4" + to_string(backGround) + "m" + text + "\x1b[0m";
+        }
+        else
+        {
+            return "\x1b[9" + to_string(foreGround) + ";10" + to_string(backGround - 8) + "m" + text + "\x1b[0m";
+        }
+    }
+}
+string setForeGround(string text, color foreGround)
+{
+    if (foreGround <= 7)
+    {
+        return "\x1b[3" + to_string(foreGround) + "m" + text + "\x1b[0m";
+    }
+    else
+    {
+        return "\x1b[9" + to_string(foreGround) + "m" + text + "\x1b[0m";
+    }
+}
+string setBackGround(string text, color backGround)
+{
+    if (backGround <= 7)
+    {
+        return "\x1b[4" + to_string(backGround) + "m" + text + "\x1b[0m";
+    }
+    else
+    {
+        return "\x1b[10" + to_string(backGround) + "m" + text + "\x1b[0m";
+    }
+}
+string setColor(string text, byte foreGround, byte backGround)
+{
+    return "\x1b[38;5;" + to_string(foreGround) + ";48;5;" + to_string(backGround) + "m" + text + "\x1b[0m";
+}
+string setForeGround(string text, byte foreGround)
+{
+    return "\x1b[38;5;" + to_string(foreGround) + "m" + text + "\x1b[0m";
+}
+string setBackGround(string text, byte backGround)
+{
+    return "\x1b[48;5;" + to_string(backGround) + "m" + text + "\x1b[0m";
+}
+string setStyle(string text, textStyle style)
+{
+    switch (style)
+    {
+    case Bold:
+        return "\x1b[1m" + text + "\x1b[0m";
+        break;
+    case Dim:
+        return "\x1b[2m" + text + "\x1b[0m";
+        break;
+    case Italic:
+        return "\x1b[3m" + text + "\x1b[0m";
+        break;
+    case Underlined:
+        return "\x1b[4m" + text + "\x1b[0m";
+        break;
+    case Blink:
+        return "\x1b[5m" + text + "\x1b[0m";
+        break;
+    case Inverse:
+        return "\x1b[7m" + text + "\x1b[0m";
+        break;
+    case Hidden:
+        return "\x1b[8m" + text + "\x1b[0m";
+        break;
+    case Strike:
+        return "\x1b[9m" + text + "\x1b[0m";
+        break;
+    case DoubleUnderlined:
+        return "\x1b[21m" + text + "\x1b[0m";
+        break;
+    case Overlined:
+        return "\x1b[53m" + text + "\x1b[0m";
+        break;
+    default:
+        break;
+    }
+}
+
+#pragma endregion style
 #pragma region cursor
 void cursorGoto(int x, int y)
 {
-    puts(("\x1b[" + to_string(x) + ";" + to_string(y) + "H").c_str());
+    cout << "\x1b[" + to_string(x) + ";" + to_string(y) + "H" << flush;
 }
 void cursorUp(int n)
 {
-    puts(("\x1b[" + to_string(n) + "A").c_str());
+    cout << "\x1b[" + to_string(n) + "A" << flush;
 }
 void cursorDown(int n)
 {
-    puts(("\x1b[" + to_string(n) + "B").c_str());
+    cout << "\x1b[" + to_string(n) + "B" << flush;
 }
 void cursorLeft(int n)
 {
-    puts(("\x1b[" + to_string(n) + "C").c_str());
+    cout << "\x1b[" + to_string(n) + "C" << flush;
 }
 void cursorRight(int n)
 {
-    puts(("\x1b[" + to_string(n) + "D").c_str());
+    cout << "\x1b[" + to_string(n) + "D" << flush;
 }
 void cursorNextLine(int n)
 {
-    puts(("\x1b[" + to_string(n) + "E").c_str());
+    cout << "\x1b[" + to_string(n) + "E" << flush;
 }
 void cursorPrevLine(int n)
 {
-    puts(("\x1b[" + to_string(n) + "F").c_str());
+    cout << "\x1b[" + to_string(n) + "F" << flush;
 }
 void cursorGotoColumn(int n)
 {
-    puts(("\x1b[" + to_string(n) + "G").c_str());
+    cout << "\x1b[" + to_string(n) + "G" << flush;
 }
 void scrollUp(int n)
 {
-    puts(("\x1b[" + to_string(n) + "S").c_str());
+    cout << "\x1b[" + to_string(n) + "S" << flush;
 }
 void scrollDown(int n)
 {
-    puts(("\x1b[" + to_string(n) + "T").c_str());
+    cout << "\x1b[" + to_string(n) + "T" << flush;
 }
 void eraseLine()
 {
-    puts("\x1b[2K");
+    cout << "\x1b[2K" << flush;
 }
 void clearScreen()
 {
-    puts("\x1b[2D");
+    cout << "\x1b[2D" << flush;
 }
 void saveCursor()
 {
-    puts("\x1b[s");
+    cout << "\x1b[s" << flush;
 }
 void restoreCursor()
 {
-    puts("\x1b[u");
+    cout << "\x1b[u" << flush;
 }
 #pragma endregion cursor
 #pragma region controls
-string progressBar(int progress, int maxProgress = 100, int width = 50, string foreGround = "#FFFFFF", string backGround = "#000000", char symbol = '=', char leftBorder = '[', char rightBorder = ']', progressbarPromptStyle promptStyle = Percentage)
-{
-    string bar = string(&leftBorder, 1);
-    int progressWidth = (progress * width) / maxProgress;
-    for (int i = 0; i < width; i++)
-    {
-        if (i < progressWidth)
-        {
-            bar += setColor(string(&symbol, 1), foreGround, backGround);
-        }
-        else
-        {
-            bar += setColor(" ", foreGround, backGround);
-        }
-    }
-    bar += string(&rightBorder, 1);
-    switch (promptStyle)
-    {
-    case Fraction:
-        bar += " " + to_string(progress) + "/" + to_string(maxProgress);
-        break;
-    case Percentage:
-        bar += " " + to_string(float(progress / maxProgress)) + "%";
-        break;
-    case None:
-        break;
-    default:
-        break;
-    }
-    return bar;
-}
-string progressBar(int progress, int maxProgress = 100, int width = 50, color foreGround = White, color backGround = Black, char symbol = '=', char leftBorder = '[', char rightBorder = ']', progressbarPromptStyle promptStyle = Percentage)
-{
-    string bar = string(&leftBorder, 1);
-    int progressWidth = (progress * width) / maxProgress;
-    for (int i = 0; i < width; i++)
-    {
-        if (i < progressWidth)
-        {
-            bar += setColor(string(&symbol, 1), foreGround, backGround);
-        }
-        else
-        {
-            bar += setColor(" ", foreGround, backGround);
-        }
-    }
-    bar += string(&rightBorder, 1);
-    switch (promptStyle)
-    {
-    case Fraction:
-        bar += " " + to_string(progress) + "/" + to_string(maxProgress);
-        break;
-    case Percentage:
-        bar += " " + to_string(float(progress / maxProgress)) + "%";
-        break;
-    case None:
-        break;
-    default:
-        break;
-    }
-    return bar;
-}
-string progressBar(int progress, int maxProgress = 100, int width = 50, color foreGround = White, color backGround = Black, char symbol = '=', char leftBorder = '[', char rightBorder = ']', color promptForeGround = Black, color promptBackGround = White, char promptLeftBorder = '(', char promptRightBorder = ')', progressbarPromptStyle promptStyle = Percentage)
-{
-    string bar = string(&leftBorder, 1);
-    int progressWidth = (progress * width) / maxProgress;
-    for (int i = 0; i < width; i++)
-    {
-        if (i < progressWidth)
-        {
-            bar += " " + setColor(string(&symbol, 1), foreGround, backGround);
-        }
-        else
-        {
-            bar += " " + setColor(" ", foreGround, backGround);
-        }
-    }
-    bar += string(&rightBorder, 1);
-    switch (promptStyle)
-    {
-    case Fraction:
-        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(progress) + "/" + to_string(maxProgress) + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
-        break;
-    case Percentage:
-        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(float(progress / maxProgress)) + "%" + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
-        break;
-    case None:
-        break;
-
-    default:
-        break;
-    }
-    return bar;
-}
-string progressBar(int progress, int maxProgress = 100, int width = 50, string foreGround = "#FFFFFF", string backGround = "#000000", char symbol = '=', char leftBorder = '[', char rightBorder = ']', string promptForeGround = "#000000", string promptBackGround = "#FFFFFF", char promptLeftBorder = '(', char promptRightBorder = ')', progressbarPromptStyle promptStyle = Percentage)
-{
-    string bar = string(&leftBorder, 1);
-    int progressWidth = (progress * width) / maxProgress;
-    for (int i = 0; i < width; i++)
-    {
-        if (i < progressWidth)
-        {
-            bar += setColor(string(&symbol, 1), foreGround, backGround);
-        }
-        else
-        {
-            bar += setColor(" ", foreGround, backGround);
-        }
-    }
-    bar += string(&rightBorder, 1);
-    switch (promptStyle)
-    {
-    case Fraction:
-        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(progress) + "/" + to_string(maxProgress) + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
-        break;
-    case Percentage:
-        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(float(progress / maxProgress)) + "%" + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
-        break;
-    case None:
-        break;
-    default:
-        break;
-    }
-    return bar;
-}
-string progressBar(int progress, int maxProgress = 100, int width = 50, color foreGround = White, color backGround = Black, progressbarPromptStyle promptStyle = Percentage)
-{
-    string bar = "";
-    int progressWidth = (progress * width) / maxProgress;
-    for (int i = 0; i < width; i++)
-    {
-        if (i < progressWidth)
-        {
-            bar += setBackGround(" ", foreGround);
-        }
-        else
-        {
-            bar += setBackGround(" ", backGround);
-        }
-    }
-    switch (promptStyle)
-    {
-    case progressbarPromptStyle::Fraction:
-        bar += " " + to_string(progress) + "/" + to_string(maxProgress);
-        break;
-    case progressbarPromptStyle::Percentage:
-        bar += " " + to_string(float(progress / maxProgress)) + "%";
-        break;
-    case progressbarPromptStyle::None:
-        break;
-    default:
-        break;
-    }
-    return bar;
-}
-string progressBar(int progress, int maxProgress = 100, int width = 50, string foreGround = "#FFFFFF", string backGround = "#000000", progressbarPromptStyle promptStyle = Percentage)
-{
-    string bar = "";
-    int progressWidth = (progress * width) / maxProgress;
-    for (int i = 0; i < width; i++)
-    {
-        if (i < progressWidth)
-        {
-            bar += setBackGround(" ", foreGround);
-        }
-        else
-        {
-            bar += setBackGround(" ", backGround);
-        }
-    }
-    switch (promptStyle)
-    {
-    case Fraction:
-        bar += " " + to_string(progress) + "/" + to_string(maxProgress);
-        break;
-    case Percentage:
-        bar += " " + to_string(float(progress / maxProgress)) + "%";
-        break;
-    case None:
-        break;
-    default:
-        break;
-    }
-    return bar;
-}
-string progressBar(int progress, int maxProgress = 100, int width = 50, color foreGround = White, color backGround = Black, color promptForeGround = Black, color promptBackGround = White, progressbarPromptStyle promptStyle = Percentage)
-{
-    string bar = "";
-    int progressWidth = (progress * width) / maxProgress;
-    for (int i = 0; i < width; i++)
-    {
-        if (i < progressWidth)
-        {
-            bar += setBackGround(" ", foreGround);
-        }
-        else
-        {
-            bar += setBackGround(" ", backGround);
-        }
-    }
-    switch (promptStyle)
-    {
-    case Fraction:
-        bar += " " + setColor(to_string(progress) + "/" + to_string(maxProgress), promptForeGround, promptBackGround);
-        break;
-    case Percentage:
-        bar += " " + setColor(to_string(float(progress / maxProgress)) + "%", promptForeGround, promptBackGround);
-        break;
-    case None:
-        break;
-    default:
-        break;
-    }
-    return bar;
-}
-string progressBar(int progress, int maxProgress = 100, int width = 50, progressbarStyle style = progressbarStyle::Modern, progressbarPromptStyle promptStyle = Percentage)
-{
-    string bar = "";
-    switch (style)
-    {
-    case progressbarStyle::Modern or progressbarStyle::Line:
-        break;
-    case progressbarStyle::Legacy:
-        bar += "[";
-        break;
-    default:
-        break;
-        int progressWidth = (progress * width) / maxProgress;
-        for (int i = 0; i < width; i++)
-        {
-            if (i < progressWidth)
-            {
-                switch (style)
-                {
-                case progressbarStyle::Modern:
-                    bar += setStyle(" ", Inverse);
-                    break;
-                case progressbarStyle::Legacy:
-                    bar += "=";
-                    break;
-                case progressbarStyle::Line:
-                    bar += "-";
-                    break;
-                default:
-                    break;
-                }
-            }
-            else
-            {
-                bar += " ";
-            }
-        }
-        switch (style)
-        {
-        case Modern:
-            break;
-        case Legacy:
-            bar += "]";
-            break;
-
-            switch (promptStyle)
-            {
-            case progressbarPromptStyle::Fraction:
-                bar += " " + to_string(progress) + "/" + to_string(maxProgress);
-                break;
-            case progressbarPromptStyle::Percentage:
-                bar += " " + to_string(float(progress / maxProgress)) + "%";
-                break;
-            case progressbarPromptStyle::None:
-                break;
-            default:
-                break;
-            }
-            return bar;
-        }
-    }
-}
 string message(string msg, msgType type, msgStyle style)
 {
     switch (type)
@@ -384,7 +269,7 @@ string message(string msg, msgType type, msgStyle style)
         case Classic:
             return setForeGround("[INFO] ", Blue) + msg;
             break;
-        case Block:
+        case Modern:
             return setBackGround("[INFO] ", Blue) + setForeGround(msg, BrightBlue);
             break;
         case Iconed:
@@ -455,6 +340,100 @@ string message(string msg, msgType type, msgStyle style)
     default:
         break;
     }
+}
+string progressBar(int progress, int maxProgress, int width, color foreGround, color backGround, char symbol, char leftBorder, char rightBorder, color promptForeGround, color promptBackGround, char promptLeftBorder, char promptRightBorder, progressbarPromptStyle promptStyle)
+{
+    string bar = string(&leftBorder, 1);
+    int progressWidth = (progress * width) / maxProgress;
+    for (int i = 0; i < width; i++)
+    {
+        if (i < progressWidth)
+        {
+            bar += " " + setColor(string(&symbol, 1), foreGround, backGround);
+        }
+        else
+        {
+            bar += " " + setColor(" ", foreGround, backGround);
+        }
+    }
+    bar += string(&rightBorder, 1);
+    switch (promptStyle)
+    {
+    case Fraction:
+        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(progress) + "/" + to_string(maxProgress) + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
+        break;
+    case Percentage:
+        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(float(progress / maxProgress)) + "%" + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
+        break;
+    case None:
+        break;
+
+    default:
+        break;
+    }
+    return bar;
+}
+string progressBar(int progress, int maxProgress, int width, HEX foreGround, HEX backGround, char symbol, char leftBorder, char rightBorder, HEX promptForeGround, HEX promptBackGround, char promptLeftBorder, char promptRightBorder, progressbarPromptStyle promptStyle)
+{
+    string bar = string(&leftBorder, 1);
+    int progressWidth = (progress * width) / maxProgress;
+    for (int i = 0; i < width; i++)
+    {
+        if (i < progressWidth)
+        {
+            bar += " " + setColor(string(&symbol, 1), foreGround, backGround);
+        }
+        else
+        {
+            bar += " " + setColor(" ", foreGround, backGround);
+        }
+    }
+    bar += string(&rightBorder, 1);
+    switch (promptStyle)
+    {
+    case Fraction:
+        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(progress) + "/" + to_string(maxProgress) + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
+        break;
+    case Percentage:
+        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(float(progress / maxProgress)) + "%" + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
+        break;
+    case None:
+        break;
+    default:
+        break;
+    }
+    return bar;
+}
+string progressBar(int progress, int maxProgress, int width, byte foreGround, byte backGround, char symbol, char leftBorder, char rightBorder, byte promptForeGround, byte promptBackGround, char promptLeftBorder, char promptRightBorder, progressbarPromptStyle promptStyle)
+{
+    string bar = string(&leftBorder, 1);
+    int progressWidth = (progress * width) / maxProgress;
+    for (int i = 0; i < width; i++)
+    {
+        if (i < progressWidth)
+        {
+            bar += " " + setColor(string(&symbol, 1), foreGround, backGround);
+        }
+        else
+        {
+            bar += " " + setColor(" ", foreGround, backGround);
+        }
+    }
+    bar += string(&rightBorder, 1);
+    switch (promptStyle)
+    {
+    case Fraction:
+        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(progress) + "/" + to_string(maxProgress) + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
+        break;
+    case Percentage:
+        bar += " " + setColor(string(&promptLeftBorder, 1) + to_string(float(progress / maxProgress)) + "%" + string(&promptRightBorder, 1), promptForeGround, promptBackGround);
+        break;
+    case None:
+        break;
+    default:
+        break;
+    }
+    return bar;
 }
 void showSpinner(string prompt = "Loading...", int delay = 100)
 {
