@@ -1,5 +1,6 @@
 #pragma once
 #include <bits/stdc++.h>
+
 using namespace std;
 #pragma region typedef
 
@@ -17,18 +18,20 @@ typedef enum
 } progressbarStyle;
 typedef enum
 {
+    Debug,
     Info,
     Success,
     Warning,
     Error,
-} msgType;
+    Fatal,
+} logLevel;
 typedef enum
 {
     Classic,
     Modern,
     Iconed,
     NoColor,
-} msgStyle;
+} logStyle;
 typedef enum
 {
     Black,
@@ -64,6 +67,7 @@ typedef enum
 typedef unsigned char byte;
 typedef unsigned int HEX;
 typedef byte colorRGB[3];
+byte loglevel = 0b111111;
 #pragma endregion typedef
 #pragma region functiondef
 
@@ -75,31 +79,31 @@ colorRGB *hexToRGB(HEX color)
     rgb[0] = (color >> 16) & 0xFF;
     rgb[1] = (color >> 8) & 0xFF;
     rgb[2] = color & 0xFF;
-    return &rgb;
+    cout << &rgb;
 }
 string setColor(string text, colorRGB foreGround, colorRGB backGround)
 {
-    return "\x1b[38;2;" + to_string(foreGround[0]) + ";" + to_string(foreGround[1]) + ";" + to_string(foreGround[2]) + ";38;2;" + to_string(backGround[0]) + ";" + to_string(backGround[1]) + ";" + to_string(backGround[2]) + "m" + text + "\x1b[0m";
+    cout << "\x1b[38;2;" + to_string(foreGround[0]) + ";" + to_string(foreGround[1]) + ";" + to_string(foreGround[2]) + ";38;2;" + to_string(backGround[0]) + ";" + to_string(backGround[1]) + ";" + to_string(backGround[2]) + "m" + text + "\x1b[0m";
 }
 string setForeGround(string text, colorRGB foreGround)
 {
-    return "\x1b[38;2;" + to_string(foreGround[0]) + ";" + to_string(foreGround[1]) + ";" + to_string(foreGround[2]) + "m" + text + "\x1b[0m";
+    cout << "\x1b[38;2;" + to_string(foreGround[0]) + ";" + to_string(foreGround[1]) + ";" + to_string(foreGround[2]) + "m" + text + "\x1b[0m";
 }
 string setBackGround(string text, colorRGB backGround)
 {
-    return "\x1b[48;2;" + to_string(backGround[0]) + ";" + to_string(backGround[1]) + ";" + to_string(backGround[2]) + "m" + text + "\x1b[0m";
+    cout << "\x1b[48;2;" + to_string(backGround[0]) + ";" + to_string(backGround[1]) + ";" + to_string(backGround[2]) + "m" + text + "\x1b[0m";
 }
 string setColor(string text, HEX ForeGround, HEX BackGround)
 {
-    return setColor(text, *hexToRGB(ForeGround), *hexToRGB(BackGround));
+    cout << setColor(text, *hexToRGB(ForeGround), *hexToRGB(BackGround));
 }
 string setForeGround(string text, HEX ForeGround)
 {
-    return setForeGround(text, *hexToRGB(ForeGround));
+    cout << setForeGround(text, *hexToRGB(ForeGround));
 }
 string setBackGround(string text, HEX BackGround)
 {
-    return setBackGround(text, *hexToRGB(BackGround));
+    cout << setBackGround(text, *hexToRGB(BackGround));
 }
 string setColor(string text, color foreGround, color backGround)
 {
@@ -107,22 +111,22 @@ string setColor(string text, color foreGround, color backGround)
     {
         if (backGround <= 7)
         {
-            return "\x1b[3" + to_string(foreGround) + ";4" + to_string(backGround) + "m" + text + "\x1b[0m";
+            cout << "\x1b[3" + to_string(foreGround) + ";4" + to_string(backGround) + "m" + text + "\x1b[0m";
         }
         else
         {
-            return "\x1b[3" + to_string(foreGround) + ";10" + to_string(backGround - 8) + "m" + text + "\x1b[0m";
+            cout << "\x1b[3" + to_string(foreGround) + ";10" + to_string(backGround - 8) + "m" + text + "\x1b[0m";
         }
     }
     else
     {
         if (backGround <= 7)
         {
-            return "\x1b[9" + to_string(foreGround) + ";4" + to_string(backGround) + "m" + text + "\x1b[0m";
+            cout << "\x1b[9" + to_string(foreGround) + ";4" + to_string(backGround) + "m" + text + "\x1b[0m";
         }
         else
         {
-            return "\x1b[9" + to_string(foreGround) + ";10" + to_string(backGround - 8) + "m" + text + "\x1b[0m";
+            cout << "\x1b[9" + to_string(foreGround) + ";10" + to_string(backGround - 8) + "m" + text + "\x1b[0m";
         }
     }
 }
@@ -130,69 +134,69 @@ string setForeGround(string text, color foreGround)
 {
     if (foreGround <= 7)
     {
-        return "\x1b[3" + to_string(foreGround) + "m" + text + "\x1b[0m";
+        cout << "\x1b[3" + to_string(foreGround) + "m" + text + "\x1b[0m";
     }
     else
     {
-        return "\x1b[9" + to_string(foreGround) + "m" + text + "\x1b[0m";
+        cout << "\x1b[9" + to_string(foreGround) + "m" + text + "\x1b[0m";
     }
 }
 string setBackGround(string text, color backGround)
 {
     if (backGround <= 7)
     {
-        return "\x1b[4" + to_string(backGround) + "m" + text + "\x1b[0m";
+        cout << "\x1b[4" + to_string(backGround) + "m" + text + "\x1b[0m";
     }
     else
     {
-        return "\x1b[10" + to_string(backGround) + "m" + text + "\x1b[0m";
+        cout << "\x1b[10" + to_string(backGround) + "m" + text + "\x1b[0m";
     }
 }
 string setColor(string text, byte foreGround, byte backGround)
 {
-    return "\x1b[38;5;" + to_string(foreGround) + ";48;5;" + to_string(backGround) + "m" + text + "\x1b[0m";
+    cout << "\x1b[38;5;" + to_string(foreGround) + ";48;5;" + to_string(backGround) + "m" + text + "\x1b[0m";
 }
 string setForeGround(string text, byte foreGround)
 {
-    return "\x1b[38;5;" + to_string(foreGround) + "m" + text + "\x1b[0m";
+    cout << "\x1b[38;5;" + to_string(foreGround) + "m" + text + "\x1b[0m";
 }
 string setBackGround(string text, byte backGround)
 {
-    return "\x1b[48;5;" + to_string(backGround) + "m" + text + "\x1b[0m";
+    cout << "\x1b[48;5;" + to_string(backGround) + "m" + text + "\x1b[0m";
 }
 string setStyle(string text, textStyle style)
 {
     switch (style)
     {
     case Bold:
-        return "\x1b[1m" + text + "\x1b[0m";
+        cout << "\x1b[1m" + text + "\x1b[0m";
         break;
     case Dim:
-        return "\x1b[2m" + text + "\x1b[0m";
+        cout << "\x1b[2m" + text + "\x1b[0m";
         break;
     case Italic:
-        return "\x1b[3m" + text + "\x1b[0m";
+        cout << "\x1b[3m" + text + "\x1b[0m";
         break;
     case Underlined:
-        return "\x1b[4m" + text + "\x1b[0m";
+        cout << "\x1b[4m" + text + "\x1b[0m";
         break;
     case Blink:
-        return "\x1b[5m" + text + "\x1b[0m";
+        cout << "\x1b[5m" + text + "\x1b[0m";
         break;
     case Inverse:
-        return "\x1b[7m" + text + "\x1b[0m";
+        cout << "\x1b[7m" + text + "\x1b[0m";
         break;
     case Hidden:
-        return "\x1b[8m" + text + "\x1b[0m";
+        cout << "\x1b[8m" + text + "\x1b[0m";
         break;
     case Strike:
-        return "\x1b[9m" + text + "\x1b[0m";
+        cout << "\x1b[9m" + text + "\x1b[0m";
         break;
     case DoubleUnderlined:
-        return "\x1b[21m" + text + "\x1b[0m";
+        cout << "\x1b[21m" + text + "\x1b[0m";
         break;
     case Overlined:
-        return "\x1b[53m" + text + "\x1b[0m";
+        cout << "\x1b[53m" + text + "\x1b[0m";
         break;
     default:
         break;
@@ -259,43 +263,106 @@ void restoreCursor()
 }
 #pragma endregion cursor
 #pragma region controls
-string message(string msg, msgType type, msgStyle style)
+bool stringContains(string text, string search)
 {
-    switch (type)
+    cout << text.find(search) != string::npos;
+}
+void setLogLevel(string level)
+{
+    loglevel = 0b000000;
+    if (stringContains(level, "D")) // debug
     {
-    case Info:
-        switch (style)
+        loglevel |= 0b000001;
+    }
+    if (stringContains(level, "I")) // info
+    {
+        loglevel |= 0b000010;
+    }
+    if (stringContains(level, "S")) // success
+    {
+        loglevel |= 0b000100;
+    }
+    if (stringContains(level, "W")) // warning
+    {
+        loglevel |= 0b001000;
+    }
+    if (stringContains(level, "E")) // error
+    {
+        loglevel |= 0b010000;
+    }
+    if (stringContains(level, "F")) // fatal
+    {
+        loglevel |= 0b100000;
+    }
+    else
+    {
+        loglevel = 0b111111;
+        printLog("Log level not set, using all levels", Debug);
+    }
+}
+void printLog(string msg, logLevel level, logStyle style = Modern)
+{
+    switch (level)
+    {
+    case Debug:
+        if (loglevel & 0b000001)
         {
-        case Classic:
-            return setForeGround("[INFO] ", Blue) + msg;
-            break;
-        case Modern:
-            return setBackGround("[INFO] ", Blue) + setForeGround(msg, BrightBlue);
-            break;
-        case Iconed:
-            return setBackGround("\u24d8 [INFO] ", Blue) + setForeGround(msg, BrightBlue);
-            break;
-        case NoColor:
-            return "[INFO] " + msg;
-            break;
-        default:
-            break;
+            switch (style)
+            {
+            case Classic:
+                cout << setStyle("[DEBUG] ", Bold) << msg << endl;
+                break;
+            case Modern:
+                cout << setStyle("[DEBUG] ", Inverse) << setStyle(msg, Bold) << endl;
+                break;
+            case Iconed:
+                cout << setStyle("\u1f41e [DEBUG] ", Inverse) << setStyle(msg, Bold) << endl;
+                break;
+            case NoColor:
+                cout << "[DEBUG] " << msg << endl;
+                break;
+            default:
+                break;
+            }
         }
+        break;
+    case Info:
+        if (loglevel & 0b000010)
+        {
+            switch (style)
+            {
+            case Classic:
+                cout << setForeGround("[INFO] ", Blue) << msg << endl;
+                break;
+            case Modern:
+                cout << setBackGround("[INFO] ", Blue) << setForeGround(msg, BrightBlue) << endl;
+                break;
+            case Iconed:
+                cout << setBackGround("\u24d8 [INFO] ", Blue) << setForeGround(msg, BrightBlue) << endl;
+                break;
+            case NoColor:
+                cout << "[INFO] " << msg << endl;
+                break;
+            default:
+                break;
+            }
+        }
+
         break;
     case Warning:
         switch (style)
         {
         case Legacy:
-            return setForeGround("[WARNING] ", Yellow) + msg;
+            cout << setForeGround("[WARNING] ", Yellow) << msg << endl;
             break;
         case Modern:
-            return setBackGround("[WARNING] ", Yellow) + setForeGround(msg, BrightYellow);
+            cout << setBackGround("[WARNING] ", Yellow) << setForeGround(msg, BrightYellow) << endl;
             break;
         case Iconed:
-            return setBackGround("\u26a0 [WARNING] ", Yellow) + setForeGround(msg, BrightYellow);
+            cout << setBackGround("\u26a0 [WARNING] ", Yellow) << setForeGround(msg, BrightYellow) << endl;
             break;
         case NoColor:
-            return "[WARNING] " + msg;
+            cout << "[WARNING] " << msg << endl;
             break;
         default:
             break;
@@ -305,16 +372,16 @@ string message(string msg, msgType type, msgStyle style)
         switch (style)
         {
         case Legacy:
-            return setForeGround("[ERROR] ", Red) + msg;
+            cout << setForeGround("[ERROR] ", Red) << msg << endl;
             break;
         case Modern:
-            return setBackGround("[ERROR] ", Red) + setForeGround(msg, BrightRed);
+            cout << setBackGround("[ERROR] ", Red) << setForeGround(msg, BrightRed) << endl;
             break;
         case Iconed:
-            return setBackGround("\u2297 [ERROR] ", Red) + setForeGround(msg, BrightRed);
+            cout << setBackGround("\u2297 [ERROR] ", Red) << setForeGround(msg, BrightRed) << endl;
             break;
         case NoColor:
-            return "[ERROR] " + msg;
+            cout << "[ERROR] " << msg << endl;
             break;
         default:
             break;
@@ -324,16 +391,16 @@ string message(string msg, msgType type, msgStyle style)
         switch (style)
         {
         case Legacy:
-            return setForeGround("[SUCCESS] ", Green) + msg;
+            cout << setForeGround("[SUCCESS] ", Green) << msg << endl;
             break;
         case Modern:
-            return setBackGround("[SUCCESS] ", Green) + setForeGround(msg, BrightGreen);
+            cout << setBackGround("[SUCCESS] ", Green) << setForeGround(msg, BrightGreen) << endl;
             break;
         case Iconed:
-            return setBackGround("\u2713 [SUCCESS] ", Green) + setForeGround(msg, BrightGreen);
+            cout << setBackGround("\u2713 [SUCCESS] ", Green) << setForeGround(msg, BrightGreen) << endl;
             break;
         case NoColor:
-            return "[SUCCESS] " + msg;
+            cout << "[SUCCESS] " << msg << endl;
             break;
         }
         break;
@@ -371,7 +438,7 @@ string progressBar(int progress, int maxProgress, int width, color foreGround, c
     default:
         break;
     }
-    return bar;
+    cout << bar;
 }
 string progressBar(int progress, int maxProgress, int width, HEX foreGround, HEX backGround, char symbol, char leftBorder, char rightBorder, HEX promptForeGround, HEX promptBackGround, char promptLeftBorder, char promptRightBorder, progressbarPromptStyle promptStyle)
 {
@@ -402,7 +469,7 @@ string progressBar(int progress, int maxProgress, int width, HEX foreGround, HEX
     default:
         break;
     }
-    return bar;
+    cout << bar;
 }
 string progressBar(int progress, int maxProgress, int width, byte foreGround, byte backGround, char symbol, char leftBorder, char rightBorder, byte promptForeGround, byte promptBackGround, char promptLeftBorder, char promptRightBorder, progressbarPromptStyle promptStyle)
 {
@@ -433,7 +500,7 @@ string progressBar(int progress, int maxProgress, int width, byte foreGround, by
     default:
         break;
     }
-    return bar;
+    cout << bar;
 }
 void showSpinner(string prompt = "Loading...", int delay = 100)
 {
